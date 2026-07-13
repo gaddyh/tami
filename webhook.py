@@ -103,7 +103,7 @@ async def process_message(msg: dict[str, Any]) -> None:
         logger.exception("Failed to process message from=%s type=%s", sender, msg_type)
 
 
-@app.post("/webhook")
+@app.post("/webhook/360dialog")
 async def webhook(request: Request) -> JSONResponse:
     try:
         payload = await request.json()

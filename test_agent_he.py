@@ -186,7 +186,7 @@ def _run_two_turn(t1: str, t2: str) -> dict:
     _assert_save_reminder_not_called(result1)
 
     _, lat2, result2 = run_agent(t2, thread_id=thread_id)
-    record_test_latency(lat1 + lat2)
+    record_test_latency((lat1 + lat2) / 2)
     _print_trajectory("two-turn (turn 2)", result2)
     return _assert_save_reminder_called(result2)
 

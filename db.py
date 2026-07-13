@@ -38,16 +38,20 @@ def get_placeholder() -> str:
 
 
 def init_reminders_table(conn) -> None:
-    ph = get_placeholder()
     if is_postgres():
+        conn.execute("DROP TABLE IF EXISTS reminders")
         conn.execute(
             """
-            CREATE TABLE IF NOT EXISTS reminders (
+            CREATE TABLE reminders (
                 id SERIAL PRIMARY KEY,
                 chat_id TEXT NOT NULL,
                 subject TEXT NOT NULL,
                 due_time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-                created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
+                created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',
+                attempts INTEGER NOT NULL DEFAULT 0,
+                sent_at TIMESTAMP WITHOUT TIME ZONE,
+                updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL
             )
             """
         )
@@ -57,15 +61,23 @@ def init_reminders_table(conn) -> None:
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_reminders_due_time ON reminders(due_time)"
         )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_reminders_status ON reminders(status)"
+        )
     else:
+        conn.execute("DROP TABLE IF EXISTS reminders")
         conn.execute(
             """
-            CREATE TABLE IF NOT EXISTS reminders (
+            CREATE TABLE reminders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 chat_id TEXT NOT NULL,
                 subject TEXT NOT NULL,
                 due_time TEXT NOT NULL,
-                created_at TEXT NOT NULL
+                created_at TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',
+                attempts INTEGER NOT NULL DEFAULT 0,
+                sent_at TEXT,
+                updated_at TEXT NOT NULL
             )
             """
         )
@@ -74,6 +86,9 @@ def init_reminders_table(conn) -> None:
         )
         conn.execute(
             "CREATE INDEX IF NOT EXISTS idx_reminders_due_time ON reminders(due_time)"
+        )
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_reminders_status ON reminders(status)"
         )
         conn.commit()
 

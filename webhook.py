@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 from agent import run_agent
 from config import settings
 from dialog360 import Dialog360Client, iter_incoming_messages
+from scheduler import start_scheduler, stop_scheduler
 from transcribe import OpenAITranscriber, Transcriber, handle_360dialog_audio_message
 
 logger = logging.getLogger(__name__)
@@ -38,8 +39,11 @@ async def lifespan(app: FastAPI):
             settings.transcription_provider,
         )
 
+    start_scheduler()
+
     yield
 
+    await stop_scheduler()
     if transcriber is not None:
         await transcriber.close()
 

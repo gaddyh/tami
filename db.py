@@ -39,10 +39,9 @@ def get_placeholder() -> str:
 
 def init_reminders_table(conn) -> None:
     if is_postgres():
-        conn.execute("DROP TABLE IF EXISTS reminders")
         conn.execute(
             """
-            CREATE TABLE reminders (
+            CREATE TABLE IF NOT EXISTS reminders (
                 id SERIAL PRIMARY KEY,
                 chat_id TEXT NOT NULL,
                 subject TEXT NOT NULL,
@@ -65,10 +64,9 @@ def init_reminders_table(conn) -> None:
             "CREATE INDEX IF NOT EXISTS idx_reminders_status ON reminders(status)"
         )
     else:
-        conn.execute("DROP TABLE IF EXISTS reminders")
         conn.execute(
             """
-            CREATE TABLE reminders (
+            CREATE TABLE IF NOT EXISTS reminders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 chat_id TEXT NOT NULL,
                 subject TEXT NOT NULL,

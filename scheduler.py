@@ -7,7 +7,7 @@ import logging
 from datetime import datetime, timedelta, timezone
 
 from config import settings
-from db import get_connection, get_placeholder, init_reminders_table, is_postgres
+from db import get_connection, get_placeholder, is_postgres
 from dialog360 import Dialog360Client
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,6 @@ async def _send_due_reminders(wa: Dialog360Client) -> int:
 
     conn = get_connection()
     try:
-        init_reminders_table(conn)
         _recover_stuck_sending(conn)
 
         if is_postgres():

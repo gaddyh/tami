@@ -20,6 +20,8 @@ for noisy in ("httpx", "httpcore", "urllib3"):
 
 wa_client: Dialog360Client | None = None
 transcriber: Transcriber | None = None
+_processed_msg_ids: set[str] = set()
+_PROCESSED_MSG_ID_MAX = 5000
 
 
 @asynccontextmanager
@@ -55,6 +57,15 @@ async def process_message(msg: dict[str, Any]) -> None:
     sender = msg["from"]
     msg_id = msg["id"]
     msg_type = msg["type"]
+
+    if msg_id in _processed_msg_ids:
+        logger.info("Skipping duplicate message id=%s from=%s", msg_id, sender)
+        return
+
+    _processed_msg_ids.add(msg_id)
+    if len(_processed_msg_ids) > _PROCESSED_MSG_ID_MAX:
+        _processed_msg_ids.clear()
+        _processed_msg_ids.add(msg_id)
 
     try:
         if wa_client:

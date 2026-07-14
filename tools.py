@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 from langchain_core.tools import tool
 
+from config import settings
 from db import get_connection, get_placeholder, init_reminders_table
 from models import Reminder
 
@@ -28,10 +30,16 @@ def save_reminder(
     if _current_chat_id is None:
         raise RuntimeError("chat_id not set — call set_chat_id before invoking agent")
 
+    tz = ZoneInfo(settings.tenant_timezone)
+    parsed = datetime.fromisoformat(due_time)
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=tz)
+    due_utc = parsed.astimezone(timezone.utc).replace(tzinfo=None)
+
     reminder = Reminder(
         chat_id=_current_chat_id,
         subject=subject,
-        due_time=datetime.fromisoformat(due_time),
+        due_time=due_utc,
     )
 
     conn = get_connection()
@@ -44,14 +52,14 @@ def save_reminder(
             cursor = conn.execute(
                 f"INSERT INTO reminders (chat_id, subject, due_time, created_at, status, attempts, updated_at) "
                 f"VALUES ({ph}, {ph}, {ph}, {ph}, 'pending', 0, {ph}) RETURNING id",
-                (reminder.chat_id, reminder.subject, reminder.due_time.replace(tzinfo=None).isoformat(), now, now),
+                (reminder.chat_id, reminder.subject, reminder.due_time.isoformat(), now, now),
             )
             reminder_id = cursor.fetchone()[0]
         else:
             cursor = conn.execute(
                 f"INSERT INTO reminders (chat_id, subject, due_time, created_at, status, attempts, updated_at) "
                 f"VALUES ({ph}, {ph}, {ph}, {ph}, 'pending', 0, {ph})",
-                (reminder.chat_id, reminder.subject, reminder.due_time.replace(tzinfo=None).isoformat(), now, now),
+                (reminder.chat_id, reminder.subject, reminder.due_time.isoformat(), now, now),
             )
             conn.commit()
             reminder_id = cursor.lastrowid

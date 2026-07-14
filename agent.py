@@ -1,4 +1,5 @@
 import time
+import uuid
 from datetime import datetime, timezone
 
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -12,6 +13,8 @@ _MODEL = "gpt-5.4-mini"
 
 _agent = None
 _checkpointer = None
+
+_thread_id_map: dict[str, str] = {}
 
 SYSTEM_PROMPT = (
     "You are a reminder assistant. Your job is to extract two pieces of "
@@ -74,7 +77,10 @@ def run_agent(
 ) -> tuple[str, float, list[dict]]:
     agent = _get_agent()
     set_chat_id(thread_id)
-    config = {"configurable": {"thread_id": thread_id}}
+
+    checkpoint_thread = _thread_id_map.get(thread_id, str(uuid.uuid4()))
+    _thread_id_map[thread_id] = checkpoint_thread
+    config = {"configurable": {"thread_id": checkpoint_thread}}
 
     now = datetime.now(timezone.utc).isoformat()
     messages = [
@@ -96,4 +102,13 @@ def run_agent(
                 for tc in tool_calls
             ]
         result_messages.append(msg)
+
+    has_save = any(
+        tc.get("name") == "save_reminder"
+        for m in result["messages"]
+        for tc in (getattr(m, "tool_calls", None) or [])
+    )
+    if has_save:
+        _thread_id_map[thread_id] = str(uuid.uuid4())
+
     return result["messages"][-1].content, latency, result_messages

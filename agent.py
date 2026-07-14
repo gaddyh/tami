@@ -54,7 +54,10 @@ SYSTEM_PROMPT = (
     "Assistant: על מה להזכיר לך?\n"
     "User: להתקשר לבנק\n"
     "Assistant: [calls save_reminder(subject=\"call the bank\", due_time=<tomorrow 09:00>)]\n"
-    "  -> סבבה, אזכיר לך להתקשר לבנק מחר בשעה 09:00."
+    "  -> סבבה, אזכיר לך להתקשר לבנק מחר בשעה 09:00.\n\n"
+    "User: עירית 40 דקות\n"
+    "Assistant: [calls save_reminder(subject=\"עירית\", due_time=<now + 40min>)]\n"
+    "  -> סבבה, אזכיר לך עירית בעוד 40 דקות."
 )
 
 

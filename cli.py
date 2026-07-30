@@ -3,7 +3,7 @@ import uuid
 
 from dotenv import load_dotenv
 
-from agent import run_agent
+from app.agent.agent import run_agent
 
 load_dotenv()
 
@@ -26,7 +26,3 @@ def main() -> None:
         response, latency, _ = run_agent(user_input, thread_id=thread_id)
         print(f"Agent: {response}")
         print(f"(latency: {latency:.2f}s)\n")
-
-
-if __name__ == "__main__":
-    main()

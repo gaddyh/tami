@@ -3,9 +3,9 @@ from zoneinfo import ZoneInfo
 
 from langchain_core.tools import tool
 
-from config import settings
-from db import get_connection, get_placeholder, init_reminders_table
-from models import Reminder
+from app.config import settings
+from app.db.connection import get_connection, get_placeholder, init_reminders_table
+from app.models.reminder import Reminder
 
 _current_chat_id: str | None = None
 
@@ -47,7 +47,7 @@ def save_reminder(
         init_reminders_table(conn)
         ph = get_placeholder()
         now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
-        from db import is_postgres
+        from app.db.connection import is_postgres
         if is_postgres():
             cursor = conn.execute(
                 f"INSERT INTO reminders (chat_id, subject, due_time, created_at, status, attempts, updated_at) "

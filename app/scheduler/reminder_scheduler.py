@@ -6,9 +6,9 @@ import asyncio
 import logging
 from datetime import datetime, timedelta, timezone
 
-from config import settings
-from db import get_connection, get_placeholder, is_postgres
-from dialog360 import Dialog360Client
+from app.config import settings
+from app.db.connection import get_connection, get_placeholder, is_postgres
+from app.services.dialog360 import Dialog360Client
 
 logger = logging.getLogger(__name__)
 

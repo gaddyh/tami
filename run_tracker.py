@@ -116,7 +116,7 @@ def write_report() -> str:
         json.dump(_run_stats, f, indent=2)
 
     try:
-        from agent import SYSTEM_PROMPT, _MODEL
+        from app.agent.agent import SYSTEM_PROMPT, _MODEL
     except ImportError:
         _MODEL = "unknown"
         SYSTEM_PROMPT = ""

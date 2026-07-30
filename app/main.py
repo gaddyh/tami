@@ -6,11 +6,11 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from agent import run_agent
-from config import settings
-from dialog360 import Dialog360Client, iter_incoming_messages
-from scheduler import start_scheduler, stop_scheduler
-from transcribe import OpenAITranscriber, Transcriber, handle_360dialog_audio_message
+from app.agent.agent import run_agent
+from app.config import settings
+from app.services.dialog360 import Dialog360Client, iter_incoming_messages
+from app.scheduler.reminder_scheduler import start_scheduler, stop_scheduler
+from app.services.transcribe import OpenAITranscriber, Transcriber, handle_360dialog_audio_message
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=getattr(logging, settings.log_level, logging.INFO))

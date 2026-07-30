@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 
 import httpx
 
-from config import Settings
+from app.config import Settings
 
 logger = logging.getLogger(__name__)
 
@@ -213,8 +213,3 @@ def iter_incoming_messages(payload: dict[str, Any]) -> Iterable[dict[str, Any]]:
                         msg_type,
                         sender,
                     )
-
-
-def expected_basic_auth_header(user: str, password: str) -> str:
-    token = base64.b64encode(f"{user}:{password}".encode("utf-8")).decode("ascii")
-    return f"Basic {token}"

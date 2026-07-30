@@ -6,8 +6,8 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
-from db import get_checkpointer
-from tools import save_reminder, set_chat_id
+from app.db.connection import get_checkpointer
+from app.tools.reminders import save_reminder, set_chat_id
 
 _MODEL = "gpt-5.4-mini"
 

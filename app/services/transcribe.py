@@ -9,7 +9,7 @@ import httpx
 from openai import AsyncOpenAI
 from langsmith.wrappers import wrap_openai
 
-from dialog360 import Dialog360Client
+from app.services.dialog360 import Dialog360Client
 
 logger = logging.getLogger(__name__)
 
@@ -220,4 +220,3 @@ def safe_unlink(path: Path) -> None:
         path.unlink(missing_ok=True)
     except Exception:
         pass
-

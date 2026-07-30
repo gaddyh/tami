@@ -21,13 +21,13 @@ def foo() -> None:
 
     print(f"Running default example:\n{DEFAULT_MESSAGE}\n")
 
-    response, latency, _ = run_agent(
+    result = run_agent(
         DEFAULT_MESSAGE,
         thread_id=thread_id,
     )
 
-    print(f"Agent: {response}")
-    print(f"(latency: {latency:.2f}s)")
+    print(f"Agent: {result.response}")
+    print(f"(latency: {result.latency_seconds:.2f}s)")
 
 def main() -> None:
     if not os.getenv("OPENAI_API_KEY"):
@@ -44,9 +44,9 @@ def main() -> None:
         if not user_input:
             continue
 
-        response, latency, _ = run_agent(user_input, thread_id=thread_id)
-        print(f"Agent: {response}")
-        print(f"(latency: {latency:.2f}s)\n")
+        result = run_agent(user_input, thread_id=thread_id)
+        print(f"Agent: {result.response}")
+        print(f"(latency: {result.latency_seconds:.2f}s)\n")
 
 
 if __name__ == "__main__":

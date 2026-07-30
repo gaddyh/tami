@@ -198,32 +198,34 @@ async def process_message(msg: dict[str, Any]) -> None:
 
         if run is not None:
             run.metadata["input_source"] = msg_type
-
-        response_text, latency, _ = await asyncio.to_thread(
-            run_agent,
-            user_text,
-            thread_id=sender,
-        )
-
-        logger.info(
-            "Agent responded to=%s latency=%.2fs",
-            sender,
-            latency,
-        )
-
-        if run is not None:
-            run.metadata.update(
-                {
-                    "agent_latency_seconds": latency,
-                    "agent_response_created": True,
-                }
+            result = await asyncio.to_thread(
+                run_agent,
+                user_message=user_text,
+                thread_id=sender,
+                channel="whatsapp",
             )
 
-        if wa_client is not None:
-            await wa_client.send_text(
-                to=sender,
-                body=response_text,
+            logger.info(
+                "Agent responded to=%s behavior=%s latency=%.2fs",
+                sender,
+                result.behavior,
+                result.latency_seconds,
             )
+
+            if run is not None:
+                run.metadata.update(
+                    {
+                        "agent_latency_seconds": result.latency_seconds,
+                        "agent_response_created": True,
+                        "agent_behavior": result.behavior,
+                    }
+                )
+
+            if wa_client is not None:
+                await wa_client.send_text(
+                    to=sender,
+                    body=result.response,
+                )
 
         if run is not None:
             run.metadata["processing_status"] = "completed"

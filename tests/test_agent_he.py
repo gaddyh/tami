@@ -80,10 +80,10 @@ def _check_due_time(actual: str, expected: datetime, tolerance: timedelta = TOLE
 
 def _run_single_turn(message: str) -> dict:
     import uuid
-    _, latency, result_messages = run_agent(message, thread_id=str(uuid.uuid4()))
-    record_test_latency(latency)
-    _print_trajectory("single-turn", result_messages)
-    return _assert_save_reminder_called(result_messages)
+    result = run_agent(message, thread_id=str(uuid.uuid4()))
+    record_test_latency(result.latency_seconds)
+    _print_trajectory("single-turn", result.messages)
+    return _assert_save_reminder_called(result.messages)
 
 
 def test_he_single_1_email_sarah_tomorrow_3pm():
@@ -181,14 +181,14 @@ def _run_two_turn(t1: str, t2: str) -> dict:
     import uuid
     thread_id = str(uuid.uuid4())
 
-    _, lat1, result1 = run_agent(t1, thread_id=thread_id)
-    _print_trajectory("two-turn (turn 1)", result1)
-    _assert_save_reminder_not_called(result1)
+    result1 = run_agent(t1, thread_id=thread_id)
+    _print_trajectory("two-turn (turn 1)", result1.messages)
+    _assert_save_reminder_not_called(result1.messages)
 
-    _, lat2, result2 = run_agent(t2, thread_id=thread_id)
-    record_test_latency((lat1 + lat2) / 2)
-    _print_trajectory("two-turn (turn 2)", result2)
-    return _assert_save_reminder_called(result2)
+    result2 = run_agent(t2, thread_id=thread_id)
+    record_test_latency((result1.latency_seconds + result2.latency_seconds) / 2)
+    _print_trajectory("two-turn (turn 2)", result2.messages)
+    return _assert_save_reminder_called(result2.messages)
 
 
 def test_he_two_turn_1_missing_time_email_professor():

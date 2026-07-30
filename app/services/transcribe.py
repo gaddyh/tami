@@ -204,6 +204,7 @@ class OpenAITranscriber:
                     await self._openai.audio.transcriptions.create(
                         model=self._model,
                         file=audio_file,
+                        language="he",
                     )
                 )
 

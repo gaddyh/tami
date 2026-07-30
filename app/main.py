@@ -12,10 +12,10 @@ from app.config import settings
 from app.scheduler.reminder_scheduler import start_scheduler, stop_scheduler
 from app.services.dialog360 import Dialog360Client, iter_incoming_messages
 from app.services.transcribe import (
-    OpenAITranscriber,
     Transcriber,
     handle_360dialog_audio_message,
 )
+from app.services.transcription_factory import get_transcriber
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -38,17 +38,7 @@ async def lifespan(app: FastAPI):
 
     wa_client = Dialog360Client(settings)
 
-    if settings.transcription_provider == "openai":
-        transcriber = OpenAITranscriber(
-            api_key=settings.openai_api_key,
-            model=settings.openai_transcribe_model,
-        )
-    else:
-        logger.warning(
-            "Transcription provider '%s' not implemented — "
-            "audio messages will fail",
-            settings.transcription_provider,
-        )
+    transcriber = get_transcriber(settings)
 
     start_scheduler()
 

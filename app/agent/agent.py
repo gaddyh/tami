@@ -83,7 +83,21 @@ def run_agent(
 
     checkpoint_thread = _thread_id_map.get(thread_id, str(uuid.uuid4()))
     _thread_id_map[thread_id] = checkpoint_thread
-    config = {"configurable": {"thread_id": checkpoint_thread}}
+    config = {
+        "configurable": {
+            "thread_id": checkpoint_thread,
+        },
+        "metadata": {
+            "environment": "development",
+            "app_version": "v1",
+            "channel": "cli",
+            "agent_type": "reminder",
+        },
+        "tags": [
+            "tami",
+            "reminder-agent",
+        ],
+    }
 
     now = datetime.now(timezone.utc).isoformat()
     messages = [

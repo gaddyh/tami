@@ -7,6 +7,27 @@ from app.agent.agent import run_agent
 
 load_dotenv()
 
+DEFAULT_MESSAGE = "Remind me tomorrow at 9 to call Dana"
+
+
+def foo() -> None:
+    if not os.getenv("OPENAI_API_KEY"):
+        raise RuntimeError(
+            "OPENAI_API_KEY is not set. "
+            "Copy .env.example to .env and fill in your key."
+        )
+
+    thread_id = str(uuid.uuid4())
+
+    print(f"Running default example:\n{DEFAULT_MESSAGE}\n")
+
+    response, latency, _ = run_agent(
+        DEFAULT_MESSAGE,
+        thread_id=thread_id,
+    )
+
+    print(f"Agent: {response}")
+    print(f"(latency: {latency:.2f}s)")
 
 def main() -> None:
     if not os.getenv("OPENAI_API_KEY"):
@@ -26,3 +47,7 @@ def main() -> None:
         response, latency, _ = run_agent(user_input, thread_id=thread_id)
         print(f"Agent: {response}")
         print(f"(latency: {latency:.2f}s)\n")
+
+
+if __name__ == "__main__":
+    foo()

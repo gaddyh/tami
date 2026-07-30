@@ -15,8 +15,15 @@ def set_chat_id(chat_id: str) -> None:
     _current_chat_id = chat_id
 
 
-@tool
-def save_reminder(
+from langchain_core.tools import tool
+from langsmith import traceable
+
+
+@traceable(
+    name="persist_reminder",
+    run_type="tool",
+)
+def persist_reminder(
     subject: str,
     due_time: str,
 ) -> str:
@@ -67,3 +74,15 @@ def save_reminder(
         conn.close()
 
     return f"Reminder #{reminder_id} saved: '{reminder.subject}' due at {reminder.due_time.isoformat()}"
+
+
+@tool
+def save_reminder(
+    subject: str,
+    due_time: str,
+) -> str:
+    """Save a reminder with a subject and due time to the database."""
+    return persist_reminder(
+        subject=subject,
+        due_time=due_time,
+    )

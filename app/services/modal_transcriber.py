@@ -7,7 +7,7 @@ from app.services.modal_client import (
     ModalTranscriptionClient,
     ModalTranscriptionTransportError,
 )
-from app.services.transcription import (
+from app.services.transcribe import (
     Transcriber,
     TranscriptionError,
     TranscriptionResult,

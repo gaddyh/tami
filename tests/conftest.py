@@ -5,6 +5,7 @@ from run_tracker import record_test_end, record_test_start, write_report
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "hebrew: Hebrew language test examples")
+    config.addinivalue_line("markers", "asyncio: async test")
 
 
 def pytest_runtest_setup(item):

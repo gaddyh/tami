@@ -10,6 +10,7 @@ import langsmith as ls
 from langsmith.wrappers import wrap_openai
 from openai import AsyncOpenAI
 
+from app.config import settings
 from app.services.dialog360 import Dialog360Client
 
 logger = logging.getLogger(__name__)
@@ -272,6 +273,7 @@ async def handle_360dialog_audio_message(
         run.metadata.update(
             {
                 "provider": "360dialog",
+                "transcription_provider": settings.transcription_provider,
                 "mime_type": mime_type,
                 "original_suffix": suffix,
                 "transcriber_type": type(transcriber).__name__,
